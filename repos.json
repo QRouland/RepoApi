@@ -1,0 +1,12 @@
+[
+  {
+    "name": "myapksrepo",
+    "directory_path": "example_repo_apks",
+    "description": "Description Repo Example",
+    "package_regex_name": "^(?P<package_name>[^-]*)-(?P<version_major>\\d+)(\\.(?P<version_minor>\\d+)|\\.apk)(\\.(?P<version_release>\\d+)\\.apk|\\.apk)?$",
+    "security": {
+      "is_public": false,
+      "allow_hash_key": []
+    }
+  }
+]

@@ -1,0 +1,36 @@
+# Python cache
+__pycache__/
+*.py[cod]
+
+# VirtualEnv
+.Python
+[Bb]in
+[Ii]nclude
+[Ll]ib
+[Ll]ib64
+[Ll]ocal
+[Ss]cripts
+pyvenv.cfg
+.venv
+*.egg
+pip-selfcheck.json
+
+# sqLite
+*.db
+*.sqlite*
+
+# Pycharm
+.idea
+
+# Tox
+.tox
+
+# Coverage
+htmlcov/
+.coverage
+coverage.xml
+
+#Config files
+config.py
+
+
