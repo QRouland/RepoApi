@@ -7,7 +7,7 @@ import os
 from flask import json
 from json import JSONDecodeError
 
-from utils.PackageFinder import InvalidPackageName
+from utils.PackageFinder import InvalidPackageName, PackageFinder
 from utils.Tools import file_as_blockiter, hash_bytestr_iter
 from watchdog.events import FileSystemEventHandler
 
@@ -40,10 +40,9 @@ class PackageVersioning(FileSystemEventHandler):
         for o in self.__repos_obs:
             o.join()
 
-    def __init__(self, package_finder, repos_json_conf, prefix_url_download="/download"):
+    def __init__(self, repos_json_conf, prefix_url_download="/download"):
         self.__repos_public = {}
         self.__repos_private = {}
-        self.__package_finder = package_finder
         self.__repos_json_conf = repos_json_conf
         self.__repos_obs = []
         self.__prefix_url_download = prefix_url_download
@@ -52,19 +51,22 @@ class PackageVersioning(FileSystemEventHandler):
 
     def __update_directory(self):
         for p in self.__repos_json_conf:
-            self.__version_directory(p['directory_path'], p['name'], p['description'])
+            self.__version_directory(p['directory_path'], p['name'], p['description'], p['package_regex_name'])
 
-    def __version_directory(self, directory_path, repo_name, repo_description):
-        repo_public = {"repo_description": repo_description}
-        repo_private = {"directory_path": os.path.abspath(directory_path)}
+    def __version_directory(self, directory_path, repo_name, repo_description, regex_package_name):
+        repo_public = {"repo_description": repo_description, }
+        repo_private = {
+            "directory_path": os.path.abspath(directory_path),
+            "package_finder": PackageFinder(regex_package_name)
+        }
 
-        for filename in self.__package_finder.find_packages(directory_path):
+        for filename in repo_private['package_finder'].find_packages(directory_path):
             package_path = os.path.join(directory_path, filename)
 
-            package_name = self.__package_finder.get_package_name(filename)
-            version_major = self.__package_finder.get_version_major(filename)
-            version_minor = self.__package_finder.get_version_minor(filename)
-            version_release = self.__package_finder.get_version_release(filename)
+            package_name = repo_private['package_finder'].get_package_name(filename)
+            version_major = repo_private['package_finder'].get_version_major(filename)
+            version_minor = repo_private['package_finder'].get_version_minor(filename)
+            version_release = repo_private['package_finder'].get_version_release(filename)
             version = (version_major, version_minor, version_release)
             package_url = os.path.join(self.__prefix_url_download, repo_name, filename)
             pacakage_sha256 = hash_bytestr_iter(file_as_blockiter(open(package_path, "rb")), hashlib.sha256(),
@@ -138,9 +140,9 @@ class PackageVersioning(FileSystemEventHandler):
         return package[str(last_version)]
 
     def get_path_package(self, filename, repo_name=None):
-        if not self.__package_finder.is_valid_filename(filename):
-            raise InvalidPackageName
         _, _, repo_private = self.__get_repo(repo_name)
+        if not repo_private['package_finder'].is_valid_filename(filename):
+            raise InvalidPackageName
         return os.path.join(repo_private['directory_path'], filename)
 
     def __get_repo(self, repo_name):

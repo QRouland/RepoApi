@@ -54,6 +54,6 @@ api.add_resource(
 )
 
 if __name__ == '__main__':
-    with PackageVersioning(PackageFinder(), json.load(open(app.config['REPOS_JSON_CONFIG_PATH']))) as pv:
+    with PackageVersioning(json.load(open(app.config['REPOS_JSON_CONFIG_PATH']))) as pv:
         pr.package_versioning = pv
         app.run()

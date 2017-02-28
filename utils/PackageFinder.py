@@ -3,8 +3,7 @@ import re
 
 
 class PackageFinder:
-    def __init__(self, regex_package_name=r"^(?P<package_name>[^-]*)-(?P<version_major>\d+)(\.("
-                                      r"?P<version_minor>\d+)|\.apk)(\.(?P<version_release>\d+)\.apk|\.apk)?$"):
+    def __init__(self, regex_package_name):
         self.pattern_package_name = re.compile(regex_package_name)
 
     def find_packages(self, directory_path):
