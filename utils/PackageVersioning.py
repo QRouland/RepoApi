@@ -54,7 +54,7 @@ class PackageVersioning(FileSystemEventHandler):
             self.__version_directory(p['directory_path'], p['name'], p['description'], p['package_regex_name'])
 
     def __version_directory(self, directory_path, repo_name, repo_description, regex_package_name):
-        repo_public = {"repo_description": repo_description, }
+        repo_public = {"repo_description": repo_description}
         repo_private = {
             "directory_path": os.path.abspath(directory_path),
             "package_finder": PackageFinder(regex_package_name)
@@ -114,8 +114,6 @@ class PackageVersioning(FileSystemEventHandler):
         self.__repos_private[repo_name] = repo_private
 
     def get_all_packages(self, package_name=None, repo_name=None):
-        if repo_name is None:
-            return self.__repos_public
         repo_name, repo_public, _ = self.__get_repo(repo_name)
         try:
             return repo_public[package_name] if \
@@ -145,9 +143,17 @@ class PackageVersioning(FileSystemEventHandler):
             raise InvalidPackageName
         return os.path.join(repo_private['directory_path'], filename)
 
-    def __get_repo(self, repo_name):
+    def __get_repo(self, repo_name, api_key="SuperApiKey"):
         try:
-            return repo_name, self.__repos_public[repo_name], self.__repos_private[repo_name]
+            r_pub = {}
+            r_pri = {}
+
+            for repo in self.__repos_json_conf:
+                if repo_name is None or repo['name'] == repo_name:
+                    if repo['security']['is_public'] or api_key in repo['security']['allow_hash_key']:
+                        r_pub[repo['name']] = self.__repos_public[repo['name']]
+                        r_pri[repo['name']] = self.__repos_private[repo['name']]
+            return repo_name, r_pub, r_pri
         except KeyError:
             raise RepoDoNotExist
 
@@ -205,4 +211,7 @@ class RepoDoNotExist(Exception):
 
 
 class PackageDoNotExist(Exception):
+    pass
+
+class AccessRepoNotAllowed(Exception):
     pass
