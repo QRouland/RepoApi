@@ -11,7 +11,8 @@ class BrowseRepo(Resource):
     def get(self, repo_name=None, package_name=None):
         try:
             return package_versioning.get_all_packages(package_name=package_name, repo_name=repo_name), 200
-        except (RepoDoNotExist, PackageDoNotExist):
+        except (RepoDoNotExist, PackageDoNotExist) as e:
+            print(type(e))
             abort(404)
 
 
@@ -25,7 +26,8 @@ class BrowseRepoVersion(Resource):
                 version_minor=version_minor,
                 version_release=version_release
             )
-        except (RepoDoNotExist, PackageDoNotExist, VersionDoNotExist):
+        except (RepoDoNotExist, PackageDoNotExist, VersionDoNotExist) as e:
+            print(e)
             abort(404)
 
 
@@ -41,7 +43,7 @@ class DownloadLastPackage(Resource):
     def get(self, package_name, repo_name):
         try:
             return redirect(
-                package_versioning.get_last_version_package(package_name=package_name, repo_name=repo_name)['apk_url']
+                package_versioning.get_last_version_package(package_name=package_name, repo_name=repo_name)['url']
             )
         except (RepoDoNotExist, PackageDoNotExist):
             abort(404)

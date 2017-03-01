@@ -116,16 +116,18 @@ class PackageVersioning(FileSystemEventHandler):
     def get_all_packages(self, package_name=None, repo_name=None):
         repo_name, repo_public, _ = self.__get_repo(repo_name)
         try:
-            return repo_public[package_name] if \
+            return repo_public[repo_name][package_name] if \
                 package_name is not None else repo_public
         except KeyError:
+            print(package_name)
+            print(repo_public)
             raise PackageDoNotExist
 
-    def get_last_version_package(self, package_name, repo_name=None):
+    def get_last_version_package(self, package_name, repo_name):
         _, repo_public, _ = self.__get_repo(repo_name)
 
         try:
-            package = repo_public[package_name]
+            package = repo_public[repo_name][package_name]
         except KeyError:
             raise PackageDoNotExist
 
@@ -137,13 +139,13 @@ class PackageVersioning(FileSystemEventHandler):
 
         return package[str(last_version)]
 
-    def get_path_package(self, filename, repo_name=None):
+    def get_path_package(self, filename, repo_name):
         _, _, repo_private = self.__get_repo(repo_name)
-        if not repo_private['package_finder'].is_valid_filename(filename):
+        if not repo_private[repo_name]['package_finder'].is_valid_filename(filename):
             raise InvalidPackageName
-        return os.path.join(repo_private['directory_path'], filename)
+        return os.path.join(repo_private[repo_name]['directory_path'], filename)
 
-    def __get_repo(self, repo_name, api_key="SuperApiKey"):
+    def __get_repo(self, repo_name, api_key=None):
         try:
             r_pub = {}
             r_pri = {}
