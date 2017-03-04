@@ -112,6 +112,9 @@ class PackageVersioning(FileSystemEventHandler):
 
         self.__repos_public[repo_name] = repo_public
         self.__repos_private[repo_name] = repo_private
+        print(self.__repos_public)
+        print(self.__repos_private)
+
 
     def get_all_packages(self, package_name=None, repo_name=None):
         repo_name, repo_public, _ = self.__get_repo(repo_name)
