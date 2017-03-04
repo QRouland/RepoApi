@@ -5,7 +5,7 @@ import hashlib
 import os
 
 from flask import json
-from json import JSONDecodeError
+from simplejson import JSONDecodeError
 
 from utils.PackageFinder import InvalidPackageName, PackageFinder
 from utils.Tools import file_as_blockiter, hash_bytestr_iter
