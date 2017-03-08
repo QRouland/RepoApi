@@ -18,38 +18,38 @@ api.add_resource(
     BrowseRepo,
     '/',  # Retrieve available repos
     '/<string:repo_name>',  # Retrieve data from <repo_name>
-    '/<string:repo_name>/<string:package_name>',  # Retrieve data from <repo_name>  about <package_name>
+    '/<string:repo_name>/<string:package_name>',  # Retrieve data from <repo_name> about <package_name>
 )
 
 api.add_resource(
     BrowseRepoVersion,
     '/<string:repo_name>/<string:package_name>/<int:version_major>',
-    # Retrieve data version <package_name> from default <repo_name>
+    # Retrieve data version <package_name> from <repo_name>
     '/<string:repo_name>/<string:package_name>/<int:version_major>/<int:version_minor>',
-    # Retrieve data version <package_name> from default <repo_name>
+    # Retrieve data version <package_name> from <repo_name>
     '/<string:repo_name>/<string:package_name>/<int:version_major>/<int:version_minor>/<int:version_release>',
-    # Retrieve data version <package_name> from default <repo_name>
+    # Retrieve data version <package_name> from <repo_name>
 )
 
 api.add_resource(
     InfoLastPackage,
-    '/<string:repo_name>/<string:package_name>/last',  # Download last version <package_name> from default <repo_name>
+    '/<string:repo_name>/<string:package_name>/last',  # Info for last version <package_name> from <repo_name>
 )
 
 api.add_resource(
     DownloadLastPackage,
     '/download/<string:repo_name>/<string:package_name>/last',
-    # Download last version <package_name> from default <repo_name>
+    # Download last version <package_name> from  <repo_name>
 )
 
 api.add_resource(
     DownloadPackageVersion,
     '/download/<string:repo_name>/<string:package_name>/<int:version_major>',
-    # Download version <package_name> from default <repo_name>
+    # Download version <package_name> from <repo_name>
     '/download/<string:repo_name>/<string:package_name>/<int:version_major>/<int:version_minor>',
-    # Download version <package_name> from default <repo_name>
+    # Download version <package_name> from <repo_name>
     '/download/<string:repo_name>/<string:package_name>/<int:version_major>/<int:version_minor>/<int:version_release>',
-    # Download version <package_name> from default <repo_name>
+    # Download version <package_name> from <repo_name>
 )
 
 api.add_resource(

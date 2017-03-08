@@ -43,6 +43,7 @@ class PackageVersioning(FileSystemEventHandler):
     def __init__(self, repos_json_conf, prefix_url_download="/download"):
         self.__repos_public = {}
         self.__repos_private = {}
+        self.__repos_last = {}
         self.__repos_json_conf = repos_json_conf
         self.__repos_obs = []
         self.__prefix_url_download = prefix_url_download
@@ -59,6 +60,8 @@ class PackageVersioning(FileSystemEventHandler):
             "directory_path": os.path.abspath(directory_path),
             "package_finder": PackageFinder(regex_package_name)
         }
+        repo_last= {}
+        list_package_name = []
 
         for filename in repo_private['package_finder'].find_packages(directory_path):
             package_path = os.path.join(directory_path, filename)
@@ -92,6 +95,7 @@ class PackageVersioning(FileSystemEventHandler):
 
             if package_name not in repo_public:
                 repo_public[package_name] = {}
+                list_package_name.append(package_name)
             else:
                 if str(version) in repo_public[package_name]:
                     raise Exception("Conflict name package {} version {} ! Version already exist !"
@@ -112,9 +116,9 @@ class PackageVersioning(FileSystemEventHandler):
 
         self.__repos_public[repo_name] = repo_public
         self.__repos_private[repo_name] = repo_private
-        print(self.__repos_public)
-        print(self.__repos_private)
-
+        for p in list_package_name:
+            repo_last[p] = self.__get_last_version_package(package_name, repo_name)
+        self.__repos_last[repo_name] = repo_last
 
     def get_all_packages(self, package_name=None, repo_name=None):
         repo_name, repo_public, _ = self.__get_repo(repo_name)
@@ -126,7 +130,7 @@ class PackageVersioning(FileSystemEventHandler):
             print(repo_public)
             raise PackageDoNotExist
 
-    def get_last_version_package(self, package_name, repo_name):
+    def __get_last_version_package(self, package_name, repo_name):
         _, repo_public, _ = self.__get_repo(repo_name)
 
         try:
@@ -141,6 +145,9 @@ class PackageVersioning(FileSystemEventHandler):
                            )
 
         return package[str(last_version)]
+
+    def get_last_version_package(self, package_name, repo_name):
+        return self.__repos_last[repo_name][package_name]
 
     def get_path_package(self, filename, repo_name):
         _, _, repo_private = self.__get_repo(repo_name)
