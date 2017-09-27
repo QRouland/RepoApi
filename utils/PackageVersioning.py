@@ -146,8 +146,13 @@ class PackageVersioning(FileSystemEventHandler):
 
         return package[str(last_version)]
 
-    def get_last_version_package(self, package_name, repo_name):
-        return self.__repos_last[repo_name][package_name]
+    def get_last_version_package(self, package_name=None, repo_name=None):
+        if package_name and repo_name:
+            return self.__repos_last[repo_name][package_name]
+        elif repo_name :
+            return self.__repos_last[repo_name]
+        else :
+            return self.__repos_last
 
     def get_path_package(self, filename, repo_name):
         _, _, repo_private = self.__get_repo(repo_name)

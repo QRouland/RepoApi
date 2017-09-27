@@ -5,7 +5,7 @@ from Config import CURRENT_CONFIG
 from flask import Flask
 from flask_restful import Api
 import api.Repo as repoApi
-from api.Repo import BrowseRepo, InfoLastPackage, DownloadLastPackage, DownloadPackage, DownloadPackageVersion, \
+from api.Repo import BrowseRepo, InfoLast, InfoLastRepo, InfoLastPackage, DownloadLastPackage, DownloadPackage, DownloadPackageVersion, \
     BrowseRepoVersion
 from utils.PackageVersioning import PackageVersioning
 
@@ -29,6 +29,16 @@ api.add_resource(
     # Retrieve data version <package_name> from <repo_name>
     '/<string:repo_name>/<string:package_name>/<int:version_major>/<int:version_minor>/<int:version_release>',
     # Retrieve data version <package_name> from <repo_name>
+)
+
+api.add_resource(
+    InfoLast,
+    '/last'
+)
+
+api.add_resource(
+    InfoLastRepo,
+    '/<string:repo_name>/last'
 )
 
 api.add_resource(
@@ -56,7 +66,6 @@ api.add_resource(
     DownloadPackage,
     '/download/<string:repo_name>/<string:filename>',  # Download version <filename> from repo_name
 )
-
 
 @app.before_first_request
 def setup():

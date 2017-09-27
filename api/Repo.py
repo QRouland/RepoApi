@@ -31,6 +31,20 @@ class BrowseRepoVersion(Resource):
             abort(404)
 
 
+class InfoLast(Resource):
+    def get(self):
+        try:
+            return package_versioning.get_last_version_package(), 200
+        except (RepoDoNotExist, PackageDoNotExist):
+            abort(404)
+
+class InfoLastRepo(Resource):
+    def get(self, repo_name):
+        try:
+            return package_versioning.get_last_version_package(repo_name=repo_name), 200
+        except (RepoDoNotExist, PackageDoNotExist):
+            abort(404)
+
 class InfoLastPackage(Resource):
     def get(self, package_name, repo_name):
         try:
